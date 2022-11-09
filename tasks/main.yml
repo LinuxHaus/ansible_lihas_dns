@@ -15,14 +15,6 @@
   loop_control:
     loop_var: lxcid
   when: hostvars[inventory_hostname].roles is defined and hostvars[inventory_hostname].roles.proxmox is defined and hostvars[inventory_hostname].roles.proxmox.lxc is defined
-- name: debug dns_array
-  ansible.builtin.debug:
-    var: dns_array
-- name: debug dns_array
-  ansible.builtin.debug:
-    var: item
-  with_list: "{{ dns_array }}"
-
 - name: create or update dns record on ucs, explizit entry
   community.general.udm_dns_record:
     name: "{{ item.hostname | replace('.' + lihas_dns_ucs_zone, '') }}"
@@ -33,6 +25,6 @@
     state: present
   when: lihas_dns_type is defined and lihas_dns_type == 'ucs'
   delegate_to: "{{ lihas_dns_ucs_server }}"
-  with_list: "{{ dns_array }}"
+  with_list: "{{ dns_array | default([]) }}"
 ...
 
