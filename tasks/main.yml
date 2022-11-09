@@ -14,7 +14,10 @@
   loop: "{{ hostvars[inventory_hostname].roles.proxmox.lxc | flatten(levels=1) }}"
   loop_control:
     loop_var: lxcid
-  when: hostvars[inventory_hostname].roles is defined and hostvars[inventory_hostname].roles.proxmox is defined and hostvars[inventory_hostname].roles.proxmox.lxc is defined
+  when: >
+    hostvars[inventory_hostname].roles is defined and
+    hostvars[inventory_hostname].roles.proxmox is defined and
+    hostvars[inventory_hostname].roles.proxmox.lxc is defined
 - name: create or update dns record on ucs, explizit entry
   community.general.udm_dns_record:
     name: "{{ item.hostname | replace('.' + lihas_dns_ucs_zone, '') }}"
@@ -27,4 +30,3 @@
   delegate_to: "{{ lihas_dns_ucs_server }}"
   with_list: "{{ dns_array | default([]) }}"
 ...
-

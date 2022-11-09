@@ -1,6 +1,9 @@
 ---
 - name: add dns entry to list
   ansible.builtin.set_fact:
-    dns_array: "{{ dns_array | default([]) + [{'hostname': hostvars[inventory_hostname].roles.proxmox.lxc[lxcid].hostname, 'dns_ip':hostvars[inventory_hostname].roles.proxmox.lxc[lxcid].dns_ip}] }}"
+    dns_array: >
+      {{ dns_array | default([]) +
+      [{'hostname': hostvars[inventory_hostname].roles.proxmox.lxc[lxcid].hostname,
+      'dns_ip':hostvars[inventory_hostname].roles.proxmox.lxc[lxcid].dns_ip}] }}
   when: hostvars[inventory_hostname].roles.proxmox.lxc[lxcid].dns_ip is defined
 ...
