@@ -13,14 +13,13 @@ ansible-playbook -i localhost, dns.yml
 
 ## Dependencies
 
-* lihas_variables
-
 ## Example Playbook
 
 ```
 ---
 - hosts: '*'
-  role: lihas_dns
+  roles:
+    - lihas_dns
 ...
 ```
 ## Tags
@@ -29,6 +28,9 @@ ansible-playbook -i localhost, dns.yml
 * lihas_dns_type: ucs
 * lihas_dns_ucs_server: name of ucs server
 * lihas_dns_ucs_zone: base zone name in ucs
+* lihas_dns_ip: ip for this hosts hostname
+* roles.proxmox.lxc[]hostname: name of dns entry
+* roles.proxmox.lxc[]dns_ip: ip of dns entry
 
 ## Variables example
 ```

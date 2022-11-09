@@ -1,0 +1,38 @@
+---
+- name: create or update dns record on ucs, explizit entry
+  community.general.udm_dns_record:
+    name: "{{ ansible_fqdn | replace('.' + lihas_dns_ucs_zone, '') }}"
+    zone: "{{ lihas_dns_ucs_zone }}"
+    type: host_record
+    data:
+      a: "{{ lihas_dns_ip }}"
+    state: present
+  when: lihas_dns_type is defined and lihas_dns_type == 'ucs' and lihas_dns_ip is defined
+  delegate_to: "{{ lihas_dns_ucs_server }}"
+- name: build dns_array
+  ansible.builtin.include_tasks: tasks/10-collect_hostnames_proxmox.yml
+  loop: "{{ hostvars[inventory_hostname].roles.proxmox.lxc | flatten(levels=1) }}"
+  loop_control:
+    loop_var: lxcid
+  when: hostvars[inventory_hostname].roles is defined and hostvars[inventory_hostname].roles.proxmox is defined and hostvars[inventory_hostname].roles.proxmox.lxc is defined
+- name: debug dns_array
+  ansible.builtin.debug:
+    var: dns_array
+- name: debug dns_array
+  ansible.builtin.debug:
+    var: item
+  with_list: "{{ dns_array }}"
+
+- name: create or update dns record on ucs, explizit entry
+  community.general.udm_dns_record:
+    name: "{{ item.hostname | replace('.' + lihas_dns_ucs_zone, '') }}"
+    zone: "{{ lihas_dns_ucs_zone }}"
+    type: host_record
+    data:
+      a: "{{ item.dns_ip }}"
+    state: present
+  when: lihas_dns_type is defined and lihas_dns_type == 'ucs'
+  delegate_to: "{{ lihas_dns_ucs_server }}"
+  with_list: "{{ dns_array }}"
+...
+
